@@ -36,6 +36,7 @@ from gdbrpc.utils import (
     HUMAN_ONLY_FIELDS,
     EventType,
     PacketStatus,
+    RemoteError,
     Request,
     RequestContext,
     Response,
@@ -302,7 +303,7 @@ class Server:
                 )
 
             message = async_exec.get_result()
-            if isinstance(message, Exception):
+            if isinstance(message, Exception) and not isinstance(message, RemoteError):
                 message = f"Error: {str(message)}"
 
             self._log_event(
