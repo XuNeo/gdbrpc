@@ -44,7 +44,7 @@ def recv_all(connection: socket.socket, length: int) -> bytes:
     while len(data) < length:
         chunk = connection.recv(length - len(data))
         if not chunk:
-            raise ConnectionError("Socket connection broken during receive")
+            raise ConnectionError("Socket connection closed during receive")
         data += chunk
     return data
 
@@ -56,19 +56,9 @@ def socket_recv(connection: socket.socket) -> bytes:
     return recv_all(connection, data_length)
 
 
-def send_all(connection: socket.socket, data: bytes) -> None:
-    total_sent = 0
-    while total_sent < len(data):
-        sent = connection.send(data[total_sent:])
-        if sent == 0:
-            raise RuntimeError("Socket connection broken")
-        total_sent += sent
-
-
 def socket_send(connection: socket.socket, data: bytes) -> None:
-    length_prefix = struct.pack("!I", len(data))
-    send_all(connection, length_prefix)
-    send_all(connection, data)
+    frame = struct.pack("!I", len(data)) + data
+    connection.sendall(frame)
 
 
 def make_session_uuid() -> str:

@@ -231,6 +231,7 @@ class Server:
         while self.running:
             try:
                 client, address = self.server.accept()
+                client.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
                 with self.clients_lock:
                     self.clients[address] = client

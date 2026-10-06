@@ -110,6 +110,7 @@ class Client:
     def connect(self):
         try:
             self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self._socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             self._socket.connect((self._host, self._port))
             self._connected = True
             self._session_uuid = make_session_uuid()
